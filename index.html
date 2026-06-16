@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PCBPO Appointment System For Passport Handover for Visa</title>
+<title>PCBPO Travel and Appointment Booking System</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -154,13 +154,51 @@
   .section-heading{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;padding-bottom:10px;border-bottom:2px solid var(--blue-light)}
   .section-heading i{font-size:20px;color:var(--gold)}
   .section-heading h2{font-size:16px;font-weight:700;color:var(--navy)}
+
+  /* ── STAGE HUB ── */
+  .stage-hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:1rem}
+  .stage-card{background:var(--white);border:1.5px solid var(--gray-border);border-radius:var(--radius-lg);padding:1.4rem;cursor:pointer;transition:all .15s;position:relative}
+  .stage-card:hover{border-color:var(--blue);box-shadow:0 4px 12px rgba(21,101,192,0.15);transform:translateY(-2px)}
+  .stage-card-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-bottom:12px}
+  .stage-card-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px}
+  .stage-card-desc{font-size:12px;color:var(--text-muted);margin-bottom:12px;line-height:1.4}
+  .stage-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+  .stage-status.not-started{background:var(--gray-bg);color:var(--text-muted)}
+  .stage-status.in-progress{background:#FEF3CD;color:#7B5800}
+  .stage-status.completed{background:#D6F0DC;color:#1B6B30}
+  .stage-status.locked{background:#FCEBEB;color:#A32D2D}
+  .stage-card.locked{opacity:.55;cursor:not-allowed}
+  .stage-card.locked:hover{transform:none;box-shadow:none;border-color:var(--gray-border)}
+
+  /* ── LOOKUP BAR ── */
+  .lookup-bar{background:var(--white);border:1.5px solid var(--gray-border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:1.5rem}
+  .lookup-bar-title{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+
+  /* ── FILE UPLOAD ── */
+  .file-drop{border:2px dashed var(--gray-border);border-radius:var(--radius);padding:1.25rem;text-align:center;cursor:pointer;transition:all .15s;background:var(--gray-bg)}
+  .file-drop:hover{border-color:var(--blue);background:var(--blue-light)}
+  .file-drop.has-file{border-color:#1B6B30;background:#D6F0DC}
+  .file-drop input[type="file"]{display:none}
+  .file-drop-icon{font-size:28px;color:var(--text-muted);margin-bottom:6px}
+  .file-drop-text{font-size:13px;color:var(--text-mid);font-weight:600}
+  .file-drop-sub{font-size:11px;color:var(--text-muted);margin-top:3px}
+
+  /* ── STAGE NAV ── */
+  .stage-back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--blue);font-weight:600;cursor:pointer;margin-bottom:1rem;background:none;border:none}
+  .stage-back:hover{color:var(--navy)}
+
+  /* ── ADMIN STAGE TABS ── */
+  .admin-stage-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem;border-bottom:1.5px solid var(--gray-border);padding-bottom:0}
+  .admin-stage-tab{padding:9px 16px;border:none;background:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-mid);border-bottom:3px solid transparent;transition:all .15s}
+  .admin-stage-tab:hover{color:var(--blue)}
+  .admin-stage-tab.active{color:var(--navy);border-bottom-color:var(--gold)}
 </style>
 </head>
 <body>
 
 <!-- TOP BANNER -->
 <div class="top-banner">
-  <p>Official Visa Passport Appointment Portal &nbsp;|&nbsp; PCBPO &nbsp;|&nbsp; Monday – Friday &nbsp;|&nbsp; Max 60 appointments/day &nbsp;|&nbsp; Overstay warning: 30 days from arrival</p>
+  <p>PCBPO Travel and Appointment Booking System &nbsp;|&nbsp; Arrival → Health Check → Passport Handover → Departure &nbsp;|&nbsp; Monday – Friday</p>
 </div>
 
 <!-- HEADER -->
@@ -170,11 +208,11 @@
       <img id="logo-img" alt="PCBPO Logo" src="data:image/jpeg;base64,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">
     </div>
     <div class="header-text">
-      <h1>PCBPO Appointment System For Passport Handover for Visa</h1>
+      <h1>PCBPO Travel and Appointment Booking System</h1>
       <p>Passport Collection – Port City BPO Head Office, 7th Floor, Aitken Spence Tower II &nbsp;·&nbsp; Closed on public &amp; mercantile holidays</p>
     </div>
     <div class="nav-tabs">
-      <button class="tab-btn active" onclick="showView('applicant')" id="tab-applicant"><i class="ti ti-calendar-plus"></i> Book</button>
+      <button class="tab-btn active" onclick="showView('applicant')" id="tab-applicant"><i class="ti ti-list-check"></i> My Application</button>
       <button class="tab-btn" onclick="showView('admin')" id="tab-admin"><i class="ti ti-settings"></i> Admin</button>
     </div>
   </div>
@@ -186,79 +224,257 @@
 
   <!-- ═══════════════ APPLICANT VIEW ═══════════════ -->
   <div id="view-applicant">
-    <div id="booking-form">
-      <div class="card">
-        <div class="section-heading">
-          <i class="ti ti-calendar-plus"></i>
-          <h2>Book your passport handover appointment</h2>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem">
-          <div class="form-group"><label>Full name</label><input type="text" id="app-name" placeholder="e.g. Kamal Perera"></div>
-          <div class="form-group"><label>Passport number</label><input type="text" id="app-passport" placeholder="e.g. N1234567"></div>
-          <div class="form-group"><label>Division <span style="font-size:12px;color:var(--text-muted);font-weight:400">(type your division)</span></label>
-            <input type="text" id="app-division" placeholder="">
+
+    <!-- ═══ STAGE HUB (landing page) ═══ -->
+    <div id="stage-hub">
+      <div class="lookup-bar">
+        <p class="lookup-bar-title"><i class="ti ti-id-badge" style="color:var(--gold)"></i>Enter your passport number to begin</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:1;min-width:200px">
+            <input type="text" id="hub-passport" placeholder="e.g. N1234567" onkeyup="if(event.key==='Enter')hubLookup()">
           </div>
-          <div class="form-group"><label>Contact number</label><input type="tel" id="app-phone" placeholder="e.g. 0771234567"></div>
-          <div class="form-group"><label>Arrival date to Sri Lanka</label><input type="date" id="app-arrival" style="max-width:220px"></div>
-          <div class="form-group"><label>Visa type</label>
-            <select id="app-visa-type">
-              <option value="">Select visa type</option>
-              <option value="First Issuance">First Issuance</option>
-              <option value="Renewal">Renewal</option>
-            </select>
-          </div>
+          <button class="btn-primary" onclick="hubLookup()"><i class="ti ti-search"></i> Continue</button>
         </div>
-        <!-- VISUAL CALENDAR + SLOT CARDS -->
-        <div style="margin-top:0.5rem">
-          <label style="font-size:13px;font-weight:600;color:var(--text-mid)"><i class="ti ti-calendar" style="margin-right:5px;color:var(--gold)"></i>Select Appointment Date &amp; Time</label>
-          <div class="cal-wrap">
-            <!-- CALENDAR -->
-            <div class="calendar">
-              <div class="cal-header">
-                <button class="cal-nav" onclick="calPrev()">&#8249;</button>
-                <h3 id="cal-month-label"></h3>
-                <button class="cal-nav" onclick="calNext()">&#8250;</button>
-              </div>
-              <div class="cal-grid" id="cal-grid"></div>
-              <div class="cal-legend">
-                <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FCEBEB;border:1px solid #A32D2D"></div>Fully booked</div>
-                <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#7B4F00"></div>Holiday</div>
-                <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--navy)"></div>Selected</div>
-              </div>
-            </div>
-            <!-- SLOT CARDS -->
-            <div class="slot-panel">
-              <div class="slot-panel-title"><i class="ti ti-clock" style="color:var(--gold)"></i><span id="slot-panel-heading">Select a date to see available times</span></div>
-              <div class="slot-cards" id="slot-grid"></div>
-              <div class="selected-summary" id="selected-summary"></div>
-            </div>
-          </div>
+        <p id="hub-msg" style="font-size:13px;margin-top:8px"></p>
+      </div>
+
+      <div id="hub-applicant-name" style="display:none;background:var(--blue-light);border:1.5px solid var(--blue);border-radius:var(--radius);padding:10px 16px;margin-bottom:1rem;font-size:14px;color:#0C447C">
+        <i class="ti ti-user-check" style="margin-right:6px"></i>Welcome, <strong id="hub-name-display"></strong>
+      </div>
+
+      <div class="stage-hub-grid">
+        <div class="stage-card" id="stage-card-1" onclick="openStage(1)">
+          <div class="stage-card-num">1</div>
+          <p class="stage-card-title">Employee Arrival</p>
+          <p class="stage-card-desc">Upload your flight ticket and confirm your arrival details to Sri Lanka.</p>
+          <span class="stage-status not-started" id="stage-status-1">Not started</span>
         </div>
-        <div id="day-status-bar" style="display:none;margin-top:10px"></div>
-        <!-- hidden input keeps existing JS working -->
-        <input type="hidden" id="app-date">
-        <div style="margin-top:1.4rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <button class="btn-primary" onclick="submitBooking()"><i class="ti ti-check"></i> Confirm booking</button>
-          <p id="booking-error" style="font-size:13px;color:#A32D2D"></p>
+        <div class="stage-card" id="stage-card-2" onclick="openStage(2)">
+          <div class="stage-card-num">2</div>
+          <p class="stage-card-title">Health Check</p>
+          <p class="stage-card-desc">Request your compulsory health check appointment after arrival.</p>
+          <span class="stage-status not-started" id="stage-status-2">Not started</span>
+        </div>
+        <div class="stage-card" id="stage-card-3" onclick="openStage(3)">
+          <div class="stage-card-num">3</div>
+          <p class="stage-card-title">Passport Handover for Visa</p>
+          <p class="stage-card-desc">Book your appointment to hand over your passport for visa processing.</p>
+          <span class="stage-status not-started" id="stage-status-3">Not started</span>
+        </div>
+        <div class="stage-card" id="stage-card-4" onclick="openStage(4)">
+          <div class="stage-card-num">4</div>
+          <p class="stage-card-title">Departure Tracking</p>
+          <p class="stage-card-desc">Upload your return ticket and departure date when resigning.</p>
+          <span class="stage-status not-started" id="stage-status-4">Not started</span>
         </div>
       </div>
     </div>
 
-    <div id="booking-success" style="display:none;margin-top:1rem">
-      <div class="success-box">
-        <i class="ti ti-circle-check" style="font-size:44px;color:#1B6B30;display:block;margin-bottom:14px"></i>
-        <p style="font-size:19px;font-weight:700;color:#144F24;margin-bottom:8px">Appointment Confirmed!</p>
-        <p id="success-detail" style="font-size:14px;color:#1B6B30;margin-bottom:16px"></p>
-        <p style="font-size:13px;color:#1B6B30;margin-bottom:20px">Please arrive <strong>10 minutes</strong> before your slot with your original passport and this confirmation.</p>
-        <p id="overstay-warn" style="display:none;font-size:13px;font-weight:700;color:#A32D2D;background:#FCEBEB;border-radius:8px;padding:8px 14px;margin-bottom:16px;border:1px solid #A32D2D"></p>
-        <div style="background:var(--white);border-radius:var(--radius);padding:1rem 1.5rem;display:inline-block;min-width:280px;border:2px solid #1B6B30">
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Booking Reference</p>
-          <p id="ref-number" style="font-size:24px;font-weight:700;color:var(--navy);letter-spacing:4px"></p>
+    <!-- ═══ STAGE 1: ARRIVAL ═══ -->
+    <div id="stage-view-1" style="display:none">
+      <button class="stage-back" onclick="backToHub()"><i class="ti ti-arrow-left"></i> Back to My Application</button>
+      <div class="card">
+        <div class="section-heading"><i class="ti ti-plane-arrival"></i><h2>Stage 1 — Employee Arrival</h2></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem">
+          <div class="form-group"><label>Passport number</label><input type="text" id="s1-passport" placeholder="e.g. N1234567" onblur="autoFillByPassport('s1')"></div>
+          <div class="form-group"><label>Full name</label><input type="text" id="s1-name" placeholder="e.g. Kamal Perera"></div>
+          <div class="form-group"><label>Departure country</label><input type="text" id="s1-departure-country" placeholder="e.g. India"></div>
+          <div class="form-group"><label>Arrival date to Sri Lanka</label><input type="date" id="s1-arrival-date"></div>
+          <div class="form-group"><label>Arrival time</label><input type="time" id="s1-arrival-time"></div>
         </div>
-        <br><br>
-        <button class="btn-sm" onclick="newBooking()">Book another appointment</button>
+        <div class="form-group">
+          <label>Upload flight ticket (PDF or image)</label>
+          <div class="file-drop" id="s1-file-drop" onclick="document.getElementById('s1-file').click()">
+            <input type="file" id="s1-file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect('s1')">
+            <div class="file-drop-icon"><i class="ti ti-cloud-upload"></i></div>
+            <p class="file-drop-text" id="s1-file-text">Click to upload your flight ticket</p>
+            <p class="file-drop-sub">PDF, JPG or PNG — max 5MB</p>
+          </div>
+        </div>
+        <div style="margin-top:1.2rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <button class="btn-primary" onclick="submitStage1()"><i class="ti ti-check"></i> Submit arrival details</button>
+          <p id="s1-error" style="font-size:13px;color:#A32D2D"></p>
+        </div>
+      </div>
+      <div id="s1-success" style="display:none;margin-top:1rem">
+        <div class="success-box">
+          <i class="ti ti-circle-check" style="font-size:40px;color:#1B6B30;display:block;margin-bottom:12px"></i>
+          <p style="font-size:18px;font-weight:700;color:#144F24;margin-bottom:8px">Arrival details submitted!</p>
+          <p style="font-size:13px;color:#1B6B30;margin-bottom:14px">You can now proceed to Stage 2 — Health Check.</p>
+          <div id="s1-healthcheck-notice" style="background:#FCEBEB;border:1.5px solid #A32D2D;border-radius:8px;padding:12px 16px;font-size:13px;color:#791F1F;text-align:left;font-weight:600">
+            <i class="ti ti-alert-triangle" style="margin-right:6px"></i><span id="s1-healthcheck-notice-text"></span>
+          </div>
+          <br>
+          <button class="btn-primary" onclick="goToHealthCheckFromS1()">Go to Health Check Stage</button>
+          <button class="btn-sm" onclick="backToHub()">Back to My Application</button>
+        </div>
       </div>
     </div>
+
+    <!-- ═══ STAGE 2: HEALTH CHECK ═══ -->
+    <div id="stage-view-2" style="display:none">
+      <button class="stage-back" onclick="backToHub()"><i class="ti ti-arrow-left"></i> Back to My Application</button>
+      <div class="card">
+        <div class="section-heading"><i class="ti ti-stethoscope"></i><h2>Stage 2 — Health Check Request</h2></div>
+        <div id="s2-locked-msg" style="display:none" class="alert alert-warn"><i class="ti ti-lock"></i>Please complete Stage 1 (Employee Arrival) first using this passport number.</div>
+        <div id="s2-form-wrap">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem">
+            <div class="form-group"><label>Passport number</label><input type="text" id="s2-passport" placeholder="e.g. N1234567" onblur="autoFillByPassport('s2')"></div>
+            <div class="form-group"><label>Full name</label><input type="text" id="s2-name" placeholder="e.g. Kamal Perera" readonly></div>
+            <div class="form-group"><label>Arrival date to Sri Lanka</label><input type="date" id="s2-arrival-date" readonly></div>
+            <div class="form-group" style="grid-column:1/-1"><label>Accommodation address in Sri Lanka</label><input type="text" id="s2-address" placeholder="e.g. No 12, Galle Road, Colombo 03"></div>
+          </div>
+          <div id="s2-window-banner" style="margin-bottom:1rem"></div>
+          <div class="form-group">
+            <label style="font-size:13px;font-weight:600;color:var(--text-mid)"><i class="ti ti-calendar" style="margin-right:5px;color:var(--gold)"></i>Select health check date</label>
+            <div class="calendar" style="max-width:320px">
+              <div class="cal-header">
+                <button class="cal-nav" onclick="s2CalPrev()">&#8249;</button>
+                <h3 id="s2-cal-month-label"></h3>
+                <button class="cal-nav" onclick="s2CalNext()">&#8250;</button>
+              </div>
+              <div class="cal-grid" id="s2-cal-grid"></div>
+              <div class="cal-legend">
+                <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--navy)"></div>Selected</div>
+                <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#7B4F00"></div>Holiday/Weekend</div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="s2-health-date">
+          <div style="margin-top:1.2rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="submitStage2()"><i class="ti ti-check"></i> Request health check</button>
+            <p id="s2-error" style="font-size:13px;color:#A32D2D"></p>
+          </div>
+        </div>
+      </div>
+      <div id="s2-success" style="display:none;margin-top:1rem">
+        <div class="success-box">
+          <i class="ti ti-circle-check" style="font-size:40px;color:#1B6B30;display:block;margin-bottom:12px"></i>
+          <p style="font-size:18px;font-weight:700;color:#144F24;margin-bottom:8px">Health check requested!</p>
+          <p style="font-size:13px;color:#1B6B30">Our team will confirm your scheduled date. You may now proceed to Stage 3.</p>
+          <br>
+          <button class="btn-sm" onclick="backToHub()">Back to My Application</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STAGE 3: PASSPORT HANDOVER (existing booking system) ═══ -->
+    <div id="stage-view-3" style="display:none">
+      <button class="stage-back" onclick="backToHub()"><i class="ti ti-arrow-left"></i> Back to My Application</button>
+      <div id="booking-form">
+        <div class="card">
+          <div class="section-heading">
+            <i class="ti ti-calendar-plus"></i>
+            <h2>Stage 3 — Book your passport handover appointment</h2>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem">
+            <div class="form-group"><label>Passport number</label><input type="text" id="app-passport" placeholder="e.g. N1234567" onblur="autoFillByPassport('app')"></div>
+            <div class="form-group"><label>Full name</label><input type="text" id="app-name" placeholder="e.g. Kamal Perera"></div>
+            <div class="form-group"><label>Division <span style="font-size:12px;color:var(--text-muted);font-weight:400">(type your division)</span></label>
+              <input type="text" id="app-division" placeholder="">
+            </div>
+            <div class="form-group"><label>Contact number</label><input type="tel" id="app-phone" placeholder="e.g. 0771234567"></div>
+            <div class="form-group"><label>Arrival date to Sri Lanka</label><input type="date" id="app-arrival" style="max-width:220px" readonly></div>
+            <div class="form-group"><label>Visa type</label>
+              <select id="app-visa-type">
+                <option value="">Select visa type</option>
+                <option value="First Issuance">First Issuance</option>
+                <option value="Renewal">Renewal</option>
+              </select>
+            </div>
+          </div>
+          <!-- VISUAL CALENDAR + SLOT CARDS -->
+          <div style="margin-top:0.5rem">
+            <label style="font-size:13px;font-weight:600;color:var(--text-mid)"><i class="ti ti-calendar" style="margin-right:5px;color:var(--gold)"></i>Select Appointment Date &amp; Time</label>
+            <div class="cal-wrap">
+              <!-- CALENDAR -->
+              <div class="calendar">
+                <div class="cal-header">
+                  <button class="cal-nav" onclick="calPrev()">&#8249;</button>
+                  <h3 id="cal-month-label"></h3>
+                  <button class="cal-nav" onclick="calNext()">&#8250;</button>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+                <div class="cal-legend">
+                  <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FCEBEB;border:1px solid #A32D2D"></div>Fully booked</div>
+                  <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#7B4F00"></div>Holiday</div>
+                  <div class="cal-legend-item"><div class="cal-legend-dot" style="background:var(--navy)"></div>Selected</div>
+                </div>
+              </div>
+              <!-- SLOT CARDS -->
+              <div class="slot-panel">
+                <div class="slot-panel-title"><i class="ti ti-clock" style="color:var(--gold)"></i><span id="slot-panel-heading">Select a date to see available times</span></div>
+                <div class="slot-cards" id="slot-grid"></div>
+                <div class="selected-summary" id="selected-summary"></div>
+              </div>
+            </div>
+          </div>
+          <div id="day-status-bar" style="display:none;margin-top:10px"></div>
+          <!-- hidden input keeps existing JS working -->
+          <input type="hidden" id="app-date">
+          <div style="margin-top:1.4rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="submitBooking()"><i class="ti ti-check"></i> Confirm booking</button>
+            <p id="booking-error" style="font-size:13px;color:#A32D2D"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="booking-success" style="display:none;margin-top:1rem">
+        <div class="success-box">
+          <i class="ti ti-circle-check" style="font-size:44px;color:#1B6B30;display:block;margin-bottom:14px"></i>
+          <p style="font-size:19px;font-weight:700;color:#144F24;margin-bottom:8px">Appointment Confirmed!</p>
+          <p id="success-detail" style="font-size:14px;color:#1B6B30;margin-bottom:16px"></p>
+          <p style="font-size:13px;color:#1B6B30;margin-bottom:20px">Please arrive <strong>10 minutes</strong> before your slot with your original passport and this confirmation.</p>
+          <p id="overstay-warn" style="display:none;font-size:13px;font-weight:700;color:#A32D2D;background:#FCEBEB;border-radius:8px;padding:8px 14px;margin-bottom:16px;border:1px solid #A32D2D"></p>
+          <div style="background:var(--white);border-radius:var(--radius);padding:1rem 1.5rem;display:inline-block;min-width:280px;border:2px solid #1B6B30">
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:6px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Booking Reference</p>
+            <p id="ref-number" style="font-size:24px;font-weight:700;color:var(--navy);letter-spacing:4px"></p>
+          </div>
+          <br><br>
+          <button class="btn-sm" onclick="newBooking()">Book another appointment</button>
+          <button class="btn-sm" onclick="backToHub()">Back to My Application</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ STAGE 4: DEPARTURE ═══ -->
+    <div id="stage-view-4" style="display:none">
+      <button class="stage-back" onclick="backToHub()"><i class="ti ti-arrow-left"></i> Back to My Application</button>
+      <div class="card">
+        <div class="section-heading"><i class="ti ti-plane-departure"></i><h2>Stage 4 — Departure Tracking</h2></div>
+        <div id="s4-locked-msg" style="display:none" class="alert alert-warn"><i class="ti ti-lock"></i>This passport number was not found in Stage 1 (Employee Arrival) records. Please complete Stage 1 first.</div>
+        <div id="s4-form-wrap">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem">
+            <div class="form-group"><label>Passport number</label><input type="text" id="s4-passport" placeholder="e.g. N1234567" onblur="autoFillByPassport('s4')"></div>
+            <div class="form-group"><label>Full name</label><input type="text" id="s4-name" placeholder="e.g. Kamal Perera" readonly></div>
+            <div class="form-group"><label>Departure date</label><input type="date" id="s4-departure-date"></div>
+          </div>
+          <div class="form-group">
+            <label>Upload return flight ticket (PDF or image)</label>
+            <div class="file-drop" id="s4-file-drop" onclick="document.getElementById('s4-file').click()">
+              <input type="file" id="s4-file" accept=".pdf,.jpg,.jpeg,.png" onchange="handleFileSelect('s4')">
+              <div class="file-drop-icon"><i class="ti ti-cloud-upload"></i></div>
+              <p class="file-drop-text" id="s4-file-text">Click to upload your return ticket</p>
+              <p class="file-drop-sub">PDF, JPG or PNG — max 5MB</p>
+            </div>
+          </div>
+          <div style="margin-top:1.2rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button class="btn-primary" onclick="submitStage4()"><i class="ti ti-check"></i> Submit departure details</button>
+            <p id="s4-error" style="font-size:13px;color:#A32D2D"></p>
+          </div>
+        </div>
+      </div>
+      <div id="s4-success" style="display:none;margin-top:1rem">
+        <div class="success-box">
+          <i class="ti ti-circle-check" style="font-size:40px;color:#1B6B30;display:block;margin-bottom:12px"></i>
+          <p style="font-size:18px;font-weight:700;color:#144F24;margin-bottom:8px">Departure details submitted!</p>
+          <p style="font-size:13px;color:#1B6B30">Thank you for completing the offboarding process.</p>
+          <br>
+          <button class="btn-sm" onclick="backToHub()">Back to My Application</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ═══════════════ ADMIN VIEW ═══════════════ -->
@@ -276,17 +492,48 @@
     </div>
 
     <div id="admin-dashboard" style="display:none">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:10px">
         <div class="section-heading" style="margin-bottom:0;border:none;padding:0">
           <i class="ti ti-layout-dashboard"></i>
           <h2>Admin dashboard</h2>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button class="tab-btn active" onclick="switchAdminTab('bookings')" id="atab-bookings">Bookings</button>
-          <button class="tab-btn" onclick="switchAdminTab('slots')" id="atab-slots">Manage slots</button>
-          <button class="tab-btn" onclick="switchAdminTab('holidays')" id="atab-holidays"><i class="ti ti-beach"></i> Holidays</button>
-          <button class="btn-sm" onclick="adminLogout()"><i class="ti ti-logout"></i> Sign out</button>
+        <button class="btn-sm" onclick="adminLogout()"><i class="ti ti-logout"></i> Sign out</button>
+      </div>
+
+      <!-- TOP-LEVEL STAGE TABS -->
+      <div class="admin-stage-tabs">
+        <button class="admin-stage-tab active" onclick="switchAdminStage(1)" id="astage-1"><i class="ti ti-plane-arrival"></i> Stage 1: Arrival</button>
+        <button class="admin-stage-tab" onclick="switchAdminStage(2)" id="astage-2"><i class="ti ti-stethoscope"></i> Stage 2: Health Check</button>
+        <button class="admin-stage-tab" onclick="switchAdminStage(3)" id="astage-3"><i class="ti ti-id-badge"></i> Stage 3: Passport Handover</button>
+        <button class="admin-stage-tab" onclick="switchAdminStage(4)" id="astage-4"><i class="ti ti-plane-departure"></i> Stage 4: Departure</button>
+      </div>
+
+      <!-- ═══ ADMIN STAGE 1 PANEL ═══ -->
+      <div id="admin-panel-1">
+        <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="s1-search" placeholder="Search name or passport..." style="flex:1;min-width:180px" oninput="renderStage1List()">
+          <button class="btn-success" onclick="exportStage1Excel()"><i class="ti ti-file-spreadsheet"></i> Export to Excel</button>
         </div>
+        <div id="s1-export-msg" style="margin-bottom:10px"></div>
+        <div id="stage1-list"></div>
+      </div>
+
+      <!-- ═══ ADMIN STAGE 2 PANEL ═══ -->
+      <div id="admin-panel-2" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="s2-search" placeholder="Search name or passport..." style="flex:1;min-width:180px" oninput="renderStage2List()">
+          <button class="btn-success" onclick="exportStage2Excel()"><i class="ti ti-file-spreadsheet"></i> Export to Excel</button>
+        </div>
+        <div id="s2-export-msg" style="margin-bottom:10px"></div>
+        <div id="stage2-list"></div>
+      </div>
+
+      <!-- ═══ ADMIN STAGE 3 PANEL (existing bookings system) ═══ -->
+      <div id="admin-panel-3">
+      <div class="admin-stage-tabs" style="border-bottom:none;margin-bottom:1rem">
+        <button class="tab-btn active" onclick="switchAdminTab('bookings')" id="atab-bookings">Bookings</button>
+        <button class="tab-btn" onclick="switchAdminTab('slots')" id="atab-slots">Manage slots</button>
+        <button class="tab-btn" onclick="switchAdminTab('holidays')" id="atab-holidays"><i class="ti ti-beach"></i> Holidays</button>
       </div>
 
       <!-- STATS -->
@@ -353,14 +600,27 @@
         </div>
         <div id="holidays-list"></div>
       </div>
+      </div>
+
+      <!-- ═══ ADMIN STAGE 4 PANEL ═══ -->
+      <div id="admin-panel-4" style="display:none">
+        <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:flex-end">
+          <input type="text" id="s4-search" placeholder="Search name or passport..." style="flex:1;min-width:180px" oninput="renderStage4List()">
+          <button class="btn-success" onclick="exportStage4Excel()"><i class="ti ti-file-spreadsheet"></i> Export to Excel</button>
+        </div>
+        <div id="s4-export-msg" style="margin-bottom:10px"></div>
+        <div id="stage4-list"></div>
+      </div>
+
     </div>
   </div>
 </div>
 
 <!-- FOOTER -->
 <div class="site-footer">
-  <p>PCBPO Appointment System For Passport Handover for Visa &nbsp;|&nbsp; <span>Official Portal</span> &nbsp;|&nbsp; For assistance contact your nearest office</p>
+  <p>PCBPO Travel and Appointment Booking System &nbsp;|&nbsp; <span>Official Portal</span> &nbsp;|&nbsp; For assistance contact your nearest office</p>
 </div>
+
 
 <!-- RESCHEDULE MODAL -->
 <div class="modal-bg" id="reschedule-modal">
@@ -471,6 +731,469 @@ function getDayTotal(dk){if(!slots[dk])return 0;return slots[dk].reduce((a,s)=>a
 function getDayBooked(dk){return bookings.filter(b=>b.date===dk&&b.status!=='Cancelled').length;}
 function isDayFull(dk){return getDayBooked(dk)>=DAY_LIMIT;}
 
+/* ── NEW STAGE STATE ── */
+let stage1Records=[],stage2Records=[],stage4Records=[];
+let pendingFiles={s1:null,s4:null};
+let currentPassport='';
+
+/* ── STAGE DB HELPERS ── */
+async function dbLoadStage1(){
+  const data=await supaGet('stage1_arrival','');
+  return Array.isArray(data)?data:[];
+}
+async function dbUpsertStage1(rec){
+  await fetch(`${SUPA_URL}/rest/v1/stage1_arrival`,{method:'POST',headers:{...HDRS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify([rec])});
+}
+async function dbLoadStage2(){
+  const data=await supaGet('stage2_health','');
+  return Array.isArray(data)?data:[];
+}
+async function dbUpsertStage2(rec){
+  await fetch(`${SUPA_URL}/rest/v1/stage2_health`,{method:'POST',headers:{...HDRS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify([rec])});
+}
+async function dbLoadStage4(){
+  const data=await supaGet('stage4_departure','');
+  return Array.isArray(data)?data:[];
+}
+async function dbUpsertStage4(rec){
+  await fetch(`${SUPA_URL}/rest/v1/stage4_departure`,{method:'POST',headers:{...HDRS,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify([rec])});
+}
+
+/* ── FILE UPLOAD TO SUPABASE STORAGE ── */
+async function uploadTicketFile(file,passport,prefix){
+  try{
+    const ext=file.name.split('.').pop();
+    const path=`${prefix}_${passport}_${Date.now()}.${ext}`;
+    const res=await fetch(`${SUPA_URL}/storage/v1/object/tickets/${path}`,{
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type||'application/octet-stream'},
+      body:file
+    });
+    if(!res.ok){console.warn('Upload failed',await res.text());return null;}
+    return `${SUPA_URL}/storage/v1/object/public/tickets/${path}`;
+  }catch(e){console.warn('Upload error',e.message);return null;}
+}
+
+function handleFileSelect(prefix){
+  const input=document.getElementById(prefix+'-file');
+  const file=input.files[0];
+  if(!file) return;
+  if(file.size>5*1024*1024){alert('File too large. Max 5MB.');input.value='';return;}
+  pendingFiles[prefix]=file;
+  const drop=document.getElementById(prefix+'-file-drop');
+  const text=document.getElementById(prefix+'-file-text');
+  drop.classList.add('has-file');
+  text.textContent=`✓ ${file.name}`;
+}
+
+/* ── STAGE HUB & NAVIGATION ── */
+function backToHub(){
+  document.getElementById('stage-hub').style.display='block';
+  ['1','2','3','4'].forEach(n=>document.getElementById('stage-view-'+n).style.display='none');
+  refreshStageStatuses();
+}
+
+async function refreshStageStatuses(){
+  if(!currentPassport) return;
+  const p=currentPassport.trim().toUpperCase();
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p);
+  const s2=stage2Records.find(r=>r.passport.toUpperCase()===p);
+  const s3=bookings.find(b=>b.passport.toUpperCase()===p);
+  const s4=stage4Records.find(r=>r.passport.toUpperCase()===p);
+  setStageStatus(1,s1?'completed':'not-started',s1?'Completed':'Not started');
+  setStageStatus(2,s2?'completed':(s1?'in-progress':'locked'),s2?'Requested':(s1?'Available':'Locked'));
+  setStageStatus(3,s3?'completed':'not-started',s3?s3.status:'Not started');
+  setStageStatus(4,s4?'completed':(s1?'in-progress':'locked'),s4?'Submitted':(s1?'Available':'Locked'));
+}
+function setStageStatus(n,cls,text){
+  const el=document.getElementById('stage-status-'+n);
+  if(!el) return;
+  el.className='stage-status '+cls;
+  el.textContent=text;
+}
+
+async function hubLookup(){
+  const p=document.getElementById('hub-passport').value.trim();
+  const msg=document.getElementById('hub-msg');
+  if(!p){msg.style.color='#A32D2D';msg.textContent='Please enter a passport number.';return;}
+  currentPassport=p;
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p.toUpperCase());
+  const nameDisplay=document.getElementById('hub-applicant-name');
+  if(s1){
+    nameDisplay.style.display='block';
+    document.getElementById('hub-name-display').textContent=s1.name;
+  } else {
+    nameDisplay.style.display='none';
+  }
+  msg.style.color='#1B6B30';msg.textContent='Passport number set. Click any stage below to continue.';
+  refreshStageStatuses();
+}
+
+function openStage(n){
+  if(!currentPassport){
+    document.getElementById('hub-msg').style.color='#A32D2D';
+    document.getElementById('hub-msg').textContent='Please enter your passport number first.';
+    return;
+  }
+  const p=currentPassport.trim().toUpperCase();
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p);
+  if((n===2||n===4)&&!s1){
+    alert('Please complete Stage 1 (Employee Arrival) first using this passport number.');
+    return;
+  }
+  document.getElementById('stage-hub').style.display='none';
+  document.getElementById('stage-view-'+n).style.display='block';
+  // Pre-fill passport field in the relevant stage
+  const fieldMap={1:'s1-passport',2:'s2-passport',3:'app-passport',4:'s4-passport'};
+  const field=document.getElementById(fieldMap[n]);
+  if(field){field.value=currentPassport;autoFillByPassport(n===3?'app':'s'+n);}
+  if(n===2) checkStage2Lock();
+  if(n===4) checkStage4Lock();
+}
+
+function checkStage2Lock(){
+  const p=document.getElementById('s2-passport').value.trim().toUpperCase();
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p);
+  document.getElementById('s2-locked-msg').style.display=s1?'none':'block';
+  document.getElementById('s2-form-wrap').style.display=s1?'block':'none';
+}
+function checkStage4Lock(){
+  const p=document.getElementById('s4-passport').value.trim().toUpperCase();
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p);
+  document.getElementById('s4-locked-msg').style.display=s1?'none':'block';
+  document.getElementById('s4-form-wrap').style.display=s1?'block':'none';
+}
+
+/* ── HEALTH CHECK WINDOW LOGIC ──
+   Earliest date = arrival + 7 calendar days, rolled forward to next
+   non-weekend/non-holiday day. Window stays open for 7 calendar days
+   from that earliest date (inclusive). After that, fully blocked. */
+function addDays(dateStr,days){
+  const d=new Date(dateStr+'T00:00');
+  d.setDate(d.getDate()+days);
+  return fmtDate(d);
+}
+function rollForwardToWorkingDay(dateStr){
+  let dk=dateStr;
+  while(!isWorkingDay(dk)){ dk=addDays(dk,1); }
+  return dk;
+}
+function getHealthCheckWindow(arrivalDate){
+  if(!arrivalDate) return null;
+  const earliestRaw=addDays(arrivalDate,7);
+  const earliest=rollForwardToWorkingDay(earliestRaw);
+  const latest=addDays(earliest,6); // 7-day span inclusive of earliest
+  return {earliest,latest};
+}
+function isWithinHealthCheckWindow(dateStr,arrivalDate){
+  const win=getHealthCheckWindow(arrivalDate);
+  if(!win) return false;
+  return dateStr>=win.earliest && dateStr<=win.latest && isWorkingDay(dateStr);
+}
+function formatNiceDate(dk){
+  return new Date(dk+'T00:00').toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+function getHealthCheckNoticeText(arrivalDate){
+  const win=getHealthCheckWindow(arrivalDate);
+  if(!win) return '';
+  return `You must complete your Health Check within 14 days of arrival. You can request an appointment between ${formatNiceDate(win.earliest)} and ${formatNiceDate(win.latest)}. Please go to the Health Check stage.`;
+}
+
+/* ── STAGE 2 MINI CALENDAR ── */
+let s2CalYear=new Date().getFullYear(), s2CalMonth=new Date().getMonth();
+let s2SelectedDate=null;
+function s2RenderCalendar(){
+  const arrivalDate=document.getElementById('s2-arrival-date').value;
+  const banner=document.getElementById('s2-window-banner');
+  if(!arrivalDate){
+    document.getElementById('s2-cal-grid').innerHTML='';
+    document.getElementById('s2-cal-month-label').textContent='';
+    banner.innerHTML='';
+    return;
+  }
+  const win=getHealthCheckWindow(arrivalDate);
+  const today=new Date();today.setHours(0,0,0,0);
+  const todayStr2=fmtDate(today);
+  const windowClosed=todayStr2>win.latest;
+
+  if(windowClosed){
+    banner.innerHTML=`<div class="alert alert-danger"><i class="ti ti-calendar-x"></i>The 14-day health check booking window has closed (was ${formatNiceDate(win.earliest)} – ${formatNiceDate(win.latest)}). Please contact the office directly.</div>`;
+  } else {
+    banner.innerHTML=`<div class="alert alert-info"><i class="ti ti-info-circle"></i>You may select a health check date between <strong>${formatNiceDate(win.earliest)}</strong> and <strong>${formatNiceDate(win.latest)}</strong>.</div>`;
+  }
+
+  // Jump calendar view to the window's month if not already navigated
+  if(!s2CalUserNavigated){
+    const winDate=new Date(win.earliest+'T00:00');
+    s2CalYear=winDate.getFullYear();s2CalMonth=winDate.getMonth();
+  }
+
+  const label=new Date(s2CalYear,s2CalMonth,1).toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  document.getElementById('s2-cal-month-label').textContent=label;
+  const grid=document.getElementById('s2-cal-grid');
+  grid.innerHTML='';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{const lbl=document.createElement('div');lbl.className='cal-day-label';lbl.textContent=d;grid.appendChild(lbl);});
+  const firstDay=new Date(s2CalYear,s2CalMonth,1).getDay();
+  const daysInMonth=new Date(s2CalYear,s2CalMonth+1,0).getDate();
+  for(let i=0;i<firstDay;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
+  for(let d=1;d<=daysInMonth;d++){
+    const el=document.createElement('div');el.className='cal-day';el.textContent=d;
+    const dk=`${s2CalYear}-${String(s2CalMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const inWindow=isWithinHealthCheckWindow(dk,arrivalDate);
+    if(isHoliday(dk)){el.classList.add('holiday');el.title=getHolidayName(dk);}
+    else if(new Date(dk+'T00:00').getDay()===0||new Date(dk+'T00:00').getDay()===6){el.classList.add('weekend');}
+    else if(!inWindow){el.classList.add('past');} // outside window styled like past/disabled
+    else{
+      el.classList.add('available');
+      el.onclick=()=>{
+        s2SelectedDate=dk;
+        document.getElementById('s2-health-date').value=dk;
+        grid.querySelectorAll('.cal-day').forEach(x=>x.classList.remove('selected'));
+        el.classList.add('selected');
+      };
+    }
+    if(s2SelectedDate===dk) el.classList.add('selected');
+    grid.appendChild(el);
+  }
+}
+let s2CalUserNavigated=false;
+function s2CalPrev(){s2CalUserNavigated=true;s2CalMonth--;if(s2CalMonth<0){s2CalMonth=11;s2CalYear--;}s2RenderCalendar();}
+function s2CalNext(){s2CalUserNavigated=true;s2CalMonth++;if(s2CalMonth>11){s2CalMonth=0;s2CalYear++;}s2RenderCalendar();}
+
+function goToHealthCheckFromS1(){
+  document.getElementById('stage-view-1').style.display='none';
+  document.getElementById('stage-view-2').style.display='block';
+  document.getElementById('s2-passport').value=currentPassport;
+  autoFillByPassport('s2');
+}
+
+/* ── AUTO-FILL BY PASSPORT ── */
+function autoFillByPassport(prefix){
+  let passportField,nameField;
+  if(prefix==='app'){passportField='app-passport';nameField='app-name';}
+  else{passportField=prefix+'-passport';nameField=prefix+'-name';}
+  const p=document.getElementById(passportField).value.trim();
+  if(!p) return;
+  currentPassport=p;
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===p.toUpperCase());
+  if(s1){
+    const nf=document.getElementById(nameField);
+    if(nf && !nf.value) nf.value=s1.name;
+    if(prefix==='s2'){
+      document.getElementById('s2-arrival-date').value=s1.arrival_date;
+      checkStage2Lock();
+      s2SelectedDate=null;s2CalUserNavigated=false;
+      document.getElementById('s2-health-date').value='';
+      s2RenderCalendar();
+    }
+    if(prefix==='app'){
+      document.getElementById('app-arrival').value=s1.arrival_date;
+    }
+    if(prefix==='s4'){
+      checkStage4Lock();
+    }
+  } else {
+    if(prefix==='s2') checkStage2Lock();
+    if(prefix==='s4') checkStage4Lock();
+  }
+}
+
+/* ── STAGE 1: SUBMIT ── */
+async function submitStage1(){
+  const passport=document.getElementById('s1-passport').value.trim();
+  const name=document.getElementById('s1-name').value.trim();
+  const departureCountry=document.getElementById('s1-departure-country').value.trim();
+  const arrivalDate=document.getElementById('s1-arrival-date').value;
+  const arrivalTime=document.getElementById('s1-arrival-time').value;
+  const err=document.getElementById('s1-error');
+  if(!passport||!name||!departureCountry||!arrivalDate||!arrivalTime){err.textContent='Please fill all fields.';return;}
+  err.textContent='';
+  showLoading('Uploading ticket and saving...');
+  let ticketUrl=null;
+  if(pendingFiles.s1){
+    ticketUrl=await uploadTicketFile(pendingFiles.s1,passport,'arrival');
+  }
+  const rec={passport,name,departure_country:departureCountry,arrival_date:arrivalDate,arrival_time:arrivalTime,ticket_file_url:ticketUrl,created:new Date().toLocaleDateString('en-GB')};
+  await dbUpsertStage1(rec);
+  const idx=stage1Records.findIndex(r=>r.passport===passport);
+  if(idx>-1) stage1Records[idx]=rec; else stage1Records.push(rec);
+  currentPassport=passport;
+  hideLoading();
+  document.querySelector('#stage-view-1 .card').style.display='none';
+  document.getElementById('s1-success').style.display='block';
+  document.getElementById('s1-healthcheck-notice-text').textContent=getHealthCheckNoticeText(arrivalDate);
+}
+
+/* ── STAGE 2: SUBMIT ── */
+async function submitStage2(){
+  const passport=document.getElementById('s2-passport').value.trim();
+  const name=document.getElementById('s2-name').value.trim();
+  const healthDate=document.getElementById('s2-health-date').value;
+  const address=document.getElementById('s2-address').value.trim();
+  const arrivalDate=document.getElementById('s2-arrival-date').value;
+  const err=document.getElementById('s2-error');
+  if(!passport||!name||!healthDate||!address||!arrivalDate){err.textContent='Please fill all fields and select a health check date from the calendar.';return;}
+  if(!isWithinHealthCheckWindow(healthDate,arrivalDate)){err.textContent='Please select a date within the allowed health check window.';return;}
+  err.textContent='';
+  showLoading('Saving health check request...');
+  const rec={passport,name,health_check_date:healthDate,accommodation_address:address,arrival_date:arrivalDate,status:'Scheduled',created:new Date().toLocaleDateString('en-GB')};
+  await dbUpsertStage2(rec);
+  const idx=stage2Records.findIndex(r=>r.passport===passport);
+  if(idx>-1) stage2Records[idx]=rec; else stage2Records.push(rec);
+  hideLoading();
+  document.querySelector('#stage-view-2 .card').style.display='none';
+  document.getElementById('s2-success').style.display='block';
+}
+
+/* ── STAGE 4: SUBMIT ── */
+async function submitStage4(){
+  const passport=document.getElementById('s4-passport').value.trim();
+  const name=document.getElementById('s4-name').value.trim();
+  const departureDate=document.getElementById('s4-departure-date').value;
+  const err=document.getElementById('s4-error');
+  if(!passport||!name||!departureDate){err.textContent='Please fill all fields.';return;}
+  const s1=stage1Records.find(r=>r.passport.toUpperCase()===passport.toUpperCase());
+  if(!s1){err.textContent='Passport number not found in Stage 1 records.';return;}
+  err.textContent='';
+  showLoading('Uploading ticket and saving...');
+  let ticketUrl=null;
+  if(pendingFiles.s4){
+    ticketUrl=await uploadTicketFile(pendingFiles.s4,passport,'departure');
+  }
+  const rec={passport,name,departure_date:departureDate,return_ticket_file_url:ticketUrl,status:'Pending',created:new Date().toLocaleDateString('en-GB')};
+  await dbUpsertStage4(rec);
+  const idx=stage4Records.findIndex(r=>r.passport===passport);
+  if(idx>-1) stage4Records[idx]=rec; else stage4Records.push(rec);
+  hideLoading();
+  document.querySelector('#stage-view-4 .card').style.display='none';
+  document.getElementById('s4-success').style.display='block';
+}
+
+/* ── ADMIN: STAGE TABS ── */
+function switchAdminStage(n){
+  [1,2,3,4].forEach(x=>{
+    document.getElementById('admin-panel-'+x).style.display=x===n?'block':'none';
+    document.getElementById('astage-'+x).classList.toggle('active',x===n);
+  });
+  if(n===1) renderStage1List();
+  if(n===2) renderStage2List();
+  if(n===3) renderBookings();
+  if(n===4) renderStage4List();
+}
+
+/* ── ADMIN: STAGE 1 LIST & EXPORT ── */
+function renderStage1List(){
+  const search=(document.getElementById('s1-search')?.value||'').toLowerCase();
+  const filtered=stage1Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const container=document.getElementById('stage1-list');
+  if(!filtered.length){container.innerHTML='<p style="font-size:14px;color:var(--text-muted);padding:1rem 0">No arrival records found.</p>';return;}
+  container.innerHTML=filtered.map(r=>`
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+            <span style="font-size:15px;font-weight:700;color:var(--navy)">${r.name}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:12px">
+            <span><i class="ti ti-id-badge"></i> ${r.passport}</span>
+            <span><i class="ti ti-world"></i> From: ${r.departure_country}</span>
+            <span><i class="ti ti-calendar"></i> ${r.arrival_date}</span>
+            <span><i class="ti ti-clock"></i> ${r.arrival_time}</span>
+          </div>
+        </div>
+        ${r.ticket_file_url?`<a href="${r.ticket_file_url}" target="_blank" class="btn-sm btn-reschedule"><i class="ti ti-file"></i> View ticket</a>`:'<span style="font-size:12px;color:#ccc">No ticket uploaded</span>'}
+      </div>
+    </div>`).join('');
+}
+function exportStage1Excel(){
+  const search=(document.getElementById('s1-search')?.value||'').toLowerCase();
+  const data=stage1Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const msg=document.getElementById('s1-export-msg');
+  if(!data.length){msg.innerHTML='<div class="alert alert-warn"><i class="ti ti-alert-triangle"></i>No records to export.</div>';setTimeout(()=>msg.innerHTML='',3000);return;}
+  const rows=data.map((r,i)=>({'No.':i+1,'Passport No.':r.passport,'Full Name':r.name,'Departure Country':r.departure_country,'Arrival Date':r.arrival_date,'Arrival Time':r.arrival_time,'Ticket Uploaded':r.ticket_file_url?'Yes':'No','Submitted On':r.created}));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:14},{wch:22},{wch:18},{wch:14},{wch:12},{wch:16},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Stage1_Arrival');
+  XLSX.writeFile(wb,`Stage1_Arrival_${fmtDate(new Date())}.xlsx`);
+  msg.innerHTML=`<div class="alert alert-success"><i class="ti ti-circle-check"></i>Exported ${data.length} record(s).</div>`;
+  setTimeout(()=>msg.innerHTML='',4000);
+}
+
+/* ── ADMIN: STAGE 2 LIST & EXPORT ── */
+function renderStage2List(){
+  const search=(document.getElementById('s2-search')?.value||'').toLowerCase();
+  const filtered=stage2Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const container=document.getElementById('stage2-list');
+  if(!filtered.length){container.innerHTML='<p style="font-size:14px;color:var(--text-muted);padding:1rem 0">No health check requests found.</p>';return;}
+  container.innerHTML=filtered.map(r=>`
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <span style="font-size:15px;font-weight:700;color:var(--navy)">${r.name}</span>
+        <span class="badge badge-pending">${r.status}</span>
+      </div>
+      <div style="font-size:13px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:12px">
+        <span><i class="ti ti-id-badge"></i> ${r.passport}</span>
+        <span><i class="ti ti-calendar-event"></i> Health check: ${r.health_check_date}</span>
+        <span><i class="ti ti-plane-arrival"></i> Arrived: ${r.arrival_date}</span>
+        <span><i class="ti ti-home"></i> ${r.accommodation_address}</span>
+      </div>
+    </div>`).join('');
+}
+function exportStage2Excel(){
+  const search=(document.getElementById('s2-search')?.value||'').toLowerCase();
+  const data=stage2Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const msg=document.getElementById('s2-export-msg');
+  if(!data.length){msg.innerHTML='<div class="alert alert-warn"><i class="ti ti-alert-triangle"></i>No records to export.</div>';setTimeout(()=>msg.innerHTML='',3000);return;}
+  const rows=data.map((r,i)=>({'No.':i+1,'Passport No.':r.passport,'Full Name':r.name,'Arrival Date':r.arrival_date,'Health Check Date':r.health_check_date,'Accommodation Address':r.accommodation_address,'Status':r.status,'Submitted On':r.created}));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:14},{wch:22},{wch:14},{wch:16},{wch:32},{wch:12},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Stage2_HealthCheck');
+  XLSX.writeFile(wb,`Stage2_HealthCheck_${fmtDate(new Date())}.xlsx`);
+  msg.innerHTML=`<div class="alert alert-success"><i class="ti ti-circle-check"></i>Exported ${data.length} record(s).</div>`;
+  setTimeout(()=>msg.innerHTML='',4000);
+}
+
+/* ── ADMIN: STAGE 4 LIST & EXPORT ── */
+function renderStage4List(){
+  const search=(document.getElementById('s4-search')?.value||'').toLowerCase();
+  const filtered=stage4Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const container=document.getElementById('stage4-list');
+  if(!filtered.length){container.innerHTML='<p style="font-size:14px;color:var(--text-muted);padding:1rem 0">No departure records found.</p>';return;}
+  container.innerHTML=filtered.map(r=>`
+    <div class="card" style="margin-bottom:10px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+            <span style="font-size:15px;font-weight:700;color:var(--navy)">${r.name}</span>
+            <span class="badge badge-pending">${r.status}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:12px">
+            <span><i class="ti ti-id-badge"></i> ${r.passport}</span>
+            <span><i class="ti ti-plane-departure"></i> Departure: ${r.departure_date}</span>
+          </div>
+        </div>
+        ${r.return_ticket_file_url?`<a href="${r.return_ticket_file_url}" target="_blank" class="btn-sm btn-reschedule"><i class="ti ti-file"></i> View ticket</a>`:'<span style="font-size:12px;color:#ccc">No ticket uploaded</span>'}
+      </div>
+    </div>`).join('');
+}
+function exportStage4Excel(){
+  const search=(document.getElementById('s4-search')?.value||'').toLowerCase();
+  const data=stage4Records.filter(r=>!search||r.name.toLowerCase().includes(search)||r.passport.toLowerCase().includes(search));
+  const msg=document.getElementById('s4-export-msg');
+  if(!data.length){msg.innerHTML='<div class="alert alert-warn"><i class="ti ti-alert-triangle"></i>No records to export.</div>';setTimeout(()=>msg.innerHTML='',3000);return;}
+  const rows=data.map((r,i)=>({'No.':i+1,'Passport No.':r.passport,'Full Name':r.name,'Departure Date':r.departure_date,'Return Ticket Uploaded':r.return_ticket_file_url?'Yes':'No','Status':r.status,'Submitted On':r.created}));
+  const ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:5},{wch:14},{wch:22},{wch:14},{wch:18},{wch:12},{wch:14}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Stage4_Departure');
+  XLSX.writeFile(wb,`Stage4_Departure_${fmtDate(new Date())}.xlsx`);
+  msg.innerHTML=`<div class="alert alert-success"><i class="ti ti-circle-check"></i>Exported ${data.length} record(s).</div>`;
+  setTimeout(()=>msg.innerHTML='',4000);
+}
+
+
 function showLoading(msg='Loading...'){
   let el=document.getElementById('global-loader');
   if(!el){el=document.createElement('div');el.id='global-loader';
@@ -555,7 +1278,7 @@ async function initData(){
         slots[dk]=SLOT_TIMES.map(s=>({time:s.start,endTime:s.end,max:6,booked:0}));
         toSeed.push(...slots[dk].map(s=>({date:dk,time:s.time,end_time:s.endTime,max_capacity:6,booked:0})));
       }
-      if(toSeed.length) await db.from('slots').insert(toSeed);
+      if(toSeed.length) await fetch(`${SUPA_URL}/rest/v1/slots`,{method:'POST',headers:HDRS,body:JSON.stringify(toSeed)});
     }
   } catch(e){
     // Offline fallback
@@ -574,6 +1297,10 @@ async function initData(){
     const hols=await dbLoadCustomHolidays();
     hols.forEach(h=>{customHolidays[h.date]=h.description;});
   }catch(e){}
+  // Load Stage 1, 2, 4 records
+  try{stage1Records=await dbLoadStage1();}catch(e){stage1Records=[];}
+  try{stage2Records=await dbLoadStage2();}catch(e){stage2Records=[];}
+  try{stage4Records=await dbLoadStage4();}catch(e){stage4Records=[];}
   updateStats();
   hideLoading();
   renderCalendar();
@@ -710,7 +1437,7 @@ function adminLogin(){
   if(document.getElementById('admin-user').value==='admin'&&document.getElementById('admin-pass').value==='admin123'){
     document.getElementById('admin-login').style.display='none';
     document.getElementById('admin-dashboard').style.display='block';
-    renderBookings();
+    switchAdminStage(1);
   } else document.getElementById('login-error').textContent='Invalid username or password.';
 }
 function adminLogout(){
